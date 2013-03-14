@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% load url from future %}
+
+{% block contents %}
+  <div class="container-fluid">
+    <div class="span6">
+      <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <p class="text-error">Notice: Group 3 exceeding pressure limit.</p>
+      </div>
+    </div>
+  	<div class="span12">
+      <div class="row-fluid">
+        <div class="span4">
+          <div class="hero-unit">
+            <p>Main Boiler:
+            <p> 199.5 F
+            <p><a class="btn" href="#">See History</a>
+            <p>Steam Boiler:
+            <p> 212.5 F
+            <p><a class="btn" href="#">See History</a>
+          </div>
+        </div>
+        <div class="row-fluid">
+          <div class="span7 offset1">
+            <div class="hero-unit">
+              <p class="text-center">Group Status</p>
+              <div class="row-fluid">
+                <div class="span4">
+                  <p>G1 
+                  <p>Set: 194.0 F
+                  <p>Current: 194.2 F
+                  <p>Pressure: 8.2 Bar
+                  <div class="progress">
+                    <div class="bar bar-success" style="width: 91%"></div>
+                  </div>
+                  <p>Active
+                  <p><a class="btn" href="#">Shot Graph</a></p>
+                </div>
+                <div class="span4">
+                  <p>G2 
+                  <p>Set: 196.0 F
+                  <p>Current: 196.8 F
+                  <p>Pressure: 0 Bar
+                  <div class="progress">
+                    <div class="bar bar-success" style="width: 0%"></div>
+                  </div>
+                  <p>Inactive
+                  <p><a class="btn" href="#">Shot Graph</a></p>
+                </div>
+                <div class="span4">
+                  <p>G3 
+                  <p>Set: 199.5 F
+                  <p>Current: 200.2 F
+                  <p>Pressure: 11.2 Bar
+                  <div class="progress">
+                    <div class="bar bar-success" style="width: 81%"></div>
+                    <div class="bar bar-danger" style="width: 19%"></div>
+                  </div>
+                  <p>Active
+                  <p><a class="btn" href="#">Shot Graph</a></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row-fluid">
+          <div class="span8">
+            <div class="hero-unit">
+              <p class="text-center">Steam Wand Status</p>
+              <div class="row-fluid">
+                <div class="span6">
+                  <p>Steam Wand A
+                  <p>Valve 80% Open
+                  <div class="progress">
+                    <div class="bar bar-success" style="width: 80%"></div>
+                  </div>
+                </div>
+                <div class="span6">
+                  <p>Steam Wand B
+                  <p>Valve Closed
+                  <div class="progress">
+                    <div class="bar bar-success" style="width: 0%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="span4">
+            <div class="hero-unit">
+              <p>Pump Status
+              <p>Off
+              <p><a class="btn" href="#">See History</a>
+              <p>Cup Warming Status
+              <p>On
+            </div>
+          </div>
+        </div>
+      </div>
+  	</div>
+  </div>
+{% endblock %}
