@@ -23,3 +23,6 @@ def graph(request):
 	               'shotdata':shotdata
 	              }
 	return render(request, 'graph.html', html_params)
+
+def graph_chart(request):
+	return render(request, 'graph_chart.html')
