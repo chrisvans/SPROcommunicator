@@ -10,8 +10,6 @@ urlpatterns = patterns(
 	                   '',
 	                   #url(r'^LMcommunicator/', include('LMcommunicator.urls', namespace='LMcommunicator')),
                        url(r'^$', views.home, name='home'),
-                       url(r'^graph/$', views.graph, name='graph'),
-                       url(r'^graph_chart/$', views.graph_chart, name='graph_chart'),
     # Examples:
     # url(r'^$', 'LMcommunicator.views.home', name='home'),
     # url(r'^LMcommunicator/', include('LMcommunicator.foo.urls')),
