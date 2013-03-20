@@ -2,18 +2,24 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.http import HttpResponse
+from django.utils import timezone
 from django.utils.timezone import utc, get_current_timezone
 import datetime
 
 class StatusSnapshot(models.Model):
 	identity = models.CharField(max_length=55)
 	status = models.CharField(max_length=55)
-	timestamp = models.CharField(max_length=55)
+	timestamp = models.DateTimeField(null=True)
 
-	def __init__(self, identity=None, status=None, timestamp=None):
+	def set_status(self, identity=None, status=None):
 		self.identity = identity
 		self.status = status
-		self.timestamp = datetime.datetime()
+
+	def get_timestamp(self):
+		true_timestamp = self.timestamp.replace(tzinfo=get_current_timezone())
+		return true_timestamp
+
+#self.timestamp.replace(tzinfo=get_current_timezone())
 
 # main_boiler_1_set_temp
 # main_boiler_2_set_temp
