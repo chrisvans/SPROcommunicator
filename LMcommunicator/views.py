@@ -12,12 +12,10 @@ import datetime
 import random
 import time
 
+# Javascript's strftime
+# (JavaScript Object Notation)
+
 def home(request):
-    #test_object = StatusSnapshot()
-    #test_object.set_status('main_boiler_set_temp', '205.2')
-    #print test_object
-    #test_object.save()
-    #try:
 
     # Create test object
     test_object = StatusSnapshot()
@@ -38,18 +36,7 @@ def home(request):
         print type(database_objects.timestamp), database_objects.timestamp
         print database_objects.get_timestamp()
         database_objects.delete()
-    # Delete object so this test can be run multiple times without looking for the same object.
 
-    #test_database_object = StatusSnapshot.objects.all()
-    #for objects in test_database_object:
-    #	print 'Object from database.'
-    #	print type(objects.timestamp), objects.timestamp, objects.identity, objects.status
-    #	print objects.get_timestamp()
-    #	print test_database_object
-    #    print test_database_object.get_timestamp(), test_database_object.identity, test_database_object.status
-    #print 1+2
-    #except Exception:
-    #	print 1+1
     return render(request, 'home.html')
 
 def generate_objects(request):
@@ -107,3 +94,10 @@ def generate_objects(request):
 # left_auto_steam_status
 # right_auto_steam_status
 # cup_warmer_status
+# var format = d3.time.format("%Y-%m-%d");
+# format.parse("2011-01-01"); // returns a Date
+# so you tell the format what part is what
+# then give it a string (or the 0th element of your x,y array) and it will know that 2011 is the year, 01 is the month, and 01 is the day
+# datetime should look something like 2007-12-31 23:59:59.999999
+
+# which would be %Y-%m-%d %H:%m%s
