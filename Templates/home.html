@@ -75,6 +75,10 @@ svg {
 
 // Wrapping in nv.addGraph allows for '0 timeout render', stores rendered charts in nv.graphs, and may do more in the future... it's NOT required
 
+var x_scale = d3.scale.linear()
+                    .domain([0, 18])
+                    .range([0, 500]);
+
 var chart;
 
 nv.addGraph(function() {
@@ -86,7 +90,8 @@ nv.addGraph(function() {
 
   chart.xAxis // chart sub-models (ie. xAxis, yAxis, etc) when accessed directly, return themselves, not the parent chart, so need to chain separately
       .axisLabel('Time in seconds')
-      .tickFormat(d3.format(',f'));
+      .tickFormat(d3.format(',f'))
+      .scale(x_scale);
 //      .tick line { stroke: #666; stroke-width: .5px; }
 
   chart.yAxis
@@ -112,6 +117,7 @@ nv.addGraph(function() {
 
     chart.xAxis
         .showMaxMin(true)
+        .scale(x_scale)
 // .1 for 1 decimal, etc+
         .tickFormat(d3.format(',f'));;
 //        .tick line { stroke: #666; stroke-width: .5px; }
@@ -130,17 +136,46 @@ nv.addGraph(function() {
     return chart;
 });
 
+function generate_temperature_array(data_array) {
+
+  var temperature_formatted_array = [];
+  var temperature_array = data_array;
+  console.log(temperature_array)
+  for (var i = 0; i < temperature_array.length; i++){
+    temperature_formatted_array.push({x: i, y: temperature_array[i]});
+  }
+
+  return temperature_formatted_array;
+
+}
+
+
 
 
 function line_graph() {
 
+  var main_boiler_1_temperature = {{ main_boiler_1_temperature }}
+  var main_boiler_2_temperature = {{ main_boiler_2_temperature }}
+  console.log(main_boiler_2_temperature);
   return [
     {
       area: false,
-      values: [{x:0, y:205.5}, {x:1, y:205.5}, {x:2, y:205.2}, {x:3, y:205.2}, {x:4, y:205.5}, {x:5, y:205.6}, {x:6, y:205.4}, {x:7, y:205.5}, {x:8, y:205.8}, {x:9, y:205.2}, {x:10, y:205.5}, {x:11, y:205.1}, {x:12, y:205.2}, {x:13, y:205.5}, {x:14, y:205.5}, {x:15, y:205.2}, {x:16, y:205.5}, {x:17, y:205.6}, {x:18, y:204.2}, ],
-      key: "Temperature",
-      color: "#ff7f0e"
+      values: generate_temperature_array(main_boiler_1_temperature),
+      key: "Main Boiler 1",
+      color: "#ff7f0e",
     },
+    {
+      area: false,
+      values: generate_temperature_array(main_boiler_2_temperature),
+      key: "Main Boiler 2",
+      color: "#ff7f0e",
+    },
+    {
+      area: false,
+      values: [{x:0, y:212}, {x:0, y:180},],
+//      key: "Border",
+      color: "FFFFFFF",
+    }
 /*    {
       area: true,
       values: [{x:1, y:205.5}, {x:2, y:205.2}, {x:3, y:205.2}, {x:4, y:205.5}, {x:5, y:205.6}, {x:6, y:205.4}, {x:7, y:205.5}, {x:8, y:205.8}, {x:9, y:205.2}, {x:10, y:205.5}, {x:11, y:205.1}, {x:12, y:205.2}, {x:13, y:205.5}, {x:14, y:205.5}, {x:15, y:205.2}, {x:16, y:205.5}, {x:17, y:205.6}, {x:18, y:204.2}, ],
@@ -167,26 +202,26 @@ function bar_graph() {
 
   return [
     {
-      area: false,
-      values: [{x:0, y:0}, {x:1, y:1}, {x:2, y:1}, {x:3, y:1}, {x:4, y:1}, {x:5, y:1}, {x:6, y:1}, {x:7, y:1}, {x:8, y:1}, {x:9, y:1}, {x:10, y:1}, {x:11, y:1}, {x:12, y:1}, {x:13, y:1}, {x:14, y:1}, {x:15, y:1}, {x:16, y:1}, {x:17, y:1}, {x:18, y:0}, ],
+      area: true,
+      values: [{x:0, y:0}, {x:1, y:1}, {x:2, y:1}, {x:3, y:1}, {x:4, y:1}, {x:5, y:1}, {x:6, y:1}, {x:7, y:1}, {x:8, y:1}, {x:9, y:1}, {x:10, y:1}, {x:11, y:1}, {x:12, y:1}, {x:13, y:1}, {x:14, y:1},],
       key: "Group 1 On",
       color: "#ff7f0e"
     },
     {
       area: false,
-      values: [{x:0, y:0}, {x:1, y:0}, {x:2, y:0}, {x:3, y:0}, {x:4, y:0}, {x:5, y:0}, {x:6, y:0}, {x:7, y:0}, {x:8, y:0}, {x:9, y:0}, {x:10, y:0}, {x:11, y:0}, {x:12, y:0}, {x:13, y:0}, {x:14, y:0}, {x:15, y:0}, {x:16, y:0}, {x:17, y:0}, {x:18, y:1}, ],
+      values: [{x:0, y:0}, {x:1, y:0}, {x:2, y:0}, {x:3, y:0}, {x:4, y:0}, {x:5, y:0}, {x:6, y:0}, {x:7, y:0}, {x:8, y:0}, {x:9, y:0}, {x:10, y:0}, {x:11, y:0}, {x:12, y:0}, {x:13, y:0}, {x:14, y:0},],
       key: "Group 2 On",
       color: "#ffff0e"
     },
     {
       area: false,
-      values: [{x:0, y:0}, {x:1, y:0}, {x:2, y:0}, {x:3, y:0}, {x:4, y:0}, {x:5, y:0}, {x:6, y:0}, {x:7, y:0}, {x:8, y:0}, {x:9, y:0}, {x:10, y:0}, {x:11, y:0}, {x:12, y:0}, {x:13, y:0}, {x:14, y:0}, {x:15, y:0}, {x:16, y:0}, {x:17, y:0}, {x:18, y:1}, ],
+      values: [{x:0, y:0}, {x:1, y:0}, {x:2, y:0}, {x:3, y:0}, {x:4, y:0}, {x:5, y:0}, {x:6, y:0}, {x:7, y:0}, {x:8, y:0}, {x:9, y:0}, {x:10, y:0}, {x:11, y:0}, {x:12, y:0}, {x:13, y:0}, {x:14, y:0},],
       key: "Group 3 On",
       color: "#ffgf0e"
     },
     {
       area: true,
-      values: [{x:0, y:0}, {x:1, y:0}, {x:2, y:0}, {x:3, y:0}, {x:4, y:0}, {x:5, y:0}, {x:6, y:0}, {x:7, y:0}, {x:8, y:0}, {x:9, y:0}, {x:10, y:0}, {x:11, y:0}, {x:12, y:0}, {x:13, y:0}, {x:14, y:0}, {x:15, y:0}, {x:16, y:0}, {x:17, y:0}, {x:18, y:1}, ],
+      values: [{x:0, y:0}, {x:1, y:0}, {x:2, y:0}, {x:3, y:0}, {x:4, y:0}, {x:5, y:0}, {x:6, y:0}, {x:7, y:0}, {x:8, y:0}, {x:9, y:0}, {x:10, y:0}, {x:11, y:0}, {x:12, y:0}, {x:13, y:0}, {x:14, y:0},],
       key: "Main Boiler Fill",
       color: "#2ca02c"
     }

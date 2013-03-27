@@ -15,36 +15,39 @@ import time
 # Javascript's strftime
 # (JavaScript Object Notation)
 
+class ViewManager():
+	def get_dataset(self, identity):
+		queryset = StatusSnapshot.objects.filter(identity=identity)
+		status_list = []
+		timestamp_list = []
+		for status_object in queryset:
+			format_test = float(status_object.status)
+			status_list.append(format_test)
+			format_test2 = status_object.get_timestamp()
+			timestamp_list.append(format_test2)
+			print status_object, format_test, format_test2
+		return [status_list, timestamp_list]
+
+
 def home(request):
+    view_manager = ViewManager()
 
-    # Create test object
-    test_object = StatusSnapshot()
-    test_object.set_status('main_boiler_2_set_temp', '200.5')
-    current_time = timezone.now()
-    test_object.timestamp = current_time
-    print '---------------------------------'
-    print 'Object before saving to database.'
-    print test_object.identity, test_object.status
-    print type(test_object.timestamp), test_object.timestamp
-    print test_object.get_timestamp()
-    test_object.save()
-    test_database_object = StatusSnapshot.objects.filter(identity='main_boiler_2_set_temp')
-    for database_objects in test_database_object:
-    	print '---------------------------------'
-    	print 'Object from database.'
-    	print database_objects.identity, database_objects.status
-        print type(database_objects.timestamp), database_objects.timestamp
-        print database_objects.get_timestamp()
-        database_objects.delete()
-
-    return render(request, 'home.html')
+    main_boiler_1_data = view_manager.get_dataset('main_boiler_1_actual_temp')
+    main_boiler_2_data = view_manager.get_dataset('main_boiler_2_actual_temp')
+    passed_params = {
+    'main_boiler_1_temperature':main_boiler_1_data[0],
+    'main_boiler_1_timestamp':main_boiler_1_data[1],
+    'main_boiler_2_temperature':main_boiler_2_data[0],
+    'main_boiler_2_timestamp':main_boiler_2_data[1],
+    }
+    return render(request, 'home.html', passed_params)
 
 def generate_objects(request):
 	# Test data to populate charts.
 	counter1 = time.time()
 	temperature = ''
 	obj1 = StatusSnapshot()
-	obj1.set_status('main_boiler_1_set_temp', '195.5')
+	obj1.set_status('main_boiler_2_set_temp', '197.5')
 	current_time = timezone.now()
 	obj1.timestamp = current_time
 	obj2 = StatusSnapshot()
@@ -55,9 +58,9 @@ def generate_objects(request):
 	while True:
 		counter = time.time()
 		if ((counter1 - counter) % 2) == 0:
-			temperature = '195.' + str(random.randrange(0, 9, 1))
+			temperature = '197.' + str(random.randrange(0, 9, 1))
 			obj_a = StatusSnapshot()
-			obj_a.set_status('main_boiler_1_actual_temp', temperature)
+			obj_a.set_status('main_boiler_2_actual_temp', temperature)
 			current_time = timezone.now()
 			obj_a.timestamp = current_time
 			steam_temp = '21' + str(random.randrange(4, 9, 1)) + '.' + str(random.randrange(0, 9, 1))
