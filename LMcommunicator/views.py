@@ -25,15 +25,17 @@ class ViewManager():
 			status_list.append(format_test)
 			format_test2 = status_object.get_timestamp()
 			timestamp_list.append(format_test2)
-			print status_object, format_test, format_test2
+			print status_object, format_test, str(format_test2)
+			timestamp_list.sort()
 		return [status_list, timestamp_list]
-
 
 def home(request):
     view_manager = ViewManager()
 
     main_boiler_1_data = view_manager.get_dataset('main_boiler_1_actual_temp')
     main_boiler_2_data = view_manager.get_dataset('main_boiler_2_actual_temp')
+    main_boiler_1_set_temp = view_manager.get_dataset('main_boiler_1_set_temp')
+    main_boiler_2_set_temp = view_manager.get_dataset('main_boiler_2_set_temp')
     passed_params = {
     'main_boiler_1_temperature':main_boiler_1_data[0],
     'main_boiler_1_timestamp':main_boiler_1_data[1],
@@ -42,12 +44,20 @@ def home(request):
     }
     return render(request, 'home.html', passed_params)
 
+def generate_timestamp(request):
+    queryset = StatusSnapshot.objects.filter(identity='main_boiler_1_actual_temp')
+    for status_object in queryset:
+    	datetime_object = status_object.timestamp
+    	formatted_time = datetime_object.strftime('%I %M %S')
+    	print formatted_time
+    return render(request, 'home.html')
+
 def generate_objects(request):
 	# Test data to populate charts.
 	counter1 = time.time()
 	temperature = ''
 	obj1 = StatusSnapshot()
-	obj1.set_status('main_boiler_2_set_temp', '197.5')
+	obj1.set_status('main_boiler_1_set_temp', '197.5')
 	current_time = timezone.now()
 	obj1.timestamp = current_time
 	obj2 = StatusSnapshot()
@@ -60,7 +70,7 @@ def generate_objects(request):
 		if ((counter1 - counter) % 2) == 0:
 			temperature = '197.' + str(random.randrange(0, 9, 1))
 			obj_a = StatusSnapshot()
-			obj_a.set_status('main_boiler_2_actual_temp', temperature)
+			obj_a.set_status('main_boiler_1_actual_temp', temperature)
 			current_time = timezone.now()
 			obj_a.timestamp = current_time
 			steam_temp = '21' + str(random.randrange(4, 9, 1)) + '.' + str(random.randrange(0, 9, 1))
@@ -71,9 +81,21 @@ def generate_objects(request):
 			obj_b.save()
 		if counter - counter1 > 30:
 			break
-		print counter, counter1
+
+#	while True:
+#		counter = time.time()
+#		if ((counter1 - counter) % 2) == 0:
+#			obj_grp1 = StatusSnapshot()
+#			obj_grp2 = StatusSnapshot()
+#			obj_grp3 = StatusSnapshot()
+#			obj_pump = StatusSnapshot()
+#			obj_steamf = StatusSnapshot()
+#			obj_teatap = StatusSnapshot()
+#			obj_cupwarm = StatusSnapshot()
+
 
 	return render(request, 'home.html')
+
 
 # main_boiler_1_set_temp
 # main_boiler_2_set_temp

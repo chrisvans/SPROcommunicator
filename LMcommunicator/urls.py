@@ -10,7 +10,8 @@ urlpatterns = patterns(
 	                   '',
 	                   #url(r'^LMcommunicator/', include('LMcommunicator.urls', namespace='LMcommunicator')),
                        url(r'^$', views.home, name='home'),
-                       url(r'^generate_objects/$', views.generate_objects, name='generate_objects')
+                       url(r'^generate_objects/$', views.generate_objects, name='generate_objects'),
+                       url(r'^generate_timestamp/$', views.generate_timestamp, name='generate_timestamp'),
     # Examples:
     # url(r'^$', 'LMcommunicator.views.home', name='home'),
     # url(r'^LMcommunicator/', include('LMcommunicator.foo.urls')),

@@ -17,6 +17,8 @@ class StatusSnapshot(models.Model):
 
 	def get_timestamp(self):
 		true_timestamp = self.timestamp.replace(tzinfo=get_current_timezone())
+		true_timestamp = true_timestamp.strftime('%I%M%S')
+		true_timestamp = int(true_timestamp)
 		return true_timestamp
 
 #self.timestamp.replace(tzinfo=get_current_timezone())

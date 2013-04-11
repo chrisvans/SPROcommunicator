@@ -4,6 +4,7 @@
   <head>
     <meta charset="utf-8">
     <title>LMcommunicator</title>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
     <script src="/static/bootstrap/js/jquery.js"></script>
     <script src="/static/bootstrap/js/bootstrap.js"></script>
     <!--<script src="/static/bootstrap/js/bootstrap-dropdown.js"></script>-->
@@ -39,6 +40,42 @@
           padding-right: 5px;
         }
       }
+    </style>
+    <style type="text/css">
+    .chart {
+      shape-rendering: crispEdges;
+    }
+ 
+    .mini text {
+      font: 9px sans-serif; 
+    }
+ 
+    .main text {
+      font: 12px sans-serif;  
+    }
+ 
+    .miniItem0 {
+      fill: darksalmon;
+      stroke-width: 6;  
+    }
+ 
+    .miniItem1 {
+      fill: darkolivegreen;
+      fill-opacity: .7;
+      stroke-width: 6;  
+    }
+ 
+    .miniItem2 {
+      fill: slategray;
+      fill-opacity: .7;
+      stroke-width: 6;  
+    }
+ 
+    .brush .extent {
+      stroke: gray;
+      fill: dodgerblue;
+      fill-opacity: .365;
+    }
     </style>
     <!-- Le styles -->
     <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">

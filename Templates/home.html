@@ -26,6 +26,7 @@ svg {
   height: 500px;
   min-width: 100px;
   min-height: 100px;
+  margin: 26px;
 /*
   margin: 50px;
   Minimum height and width is a good idea to prevent negative SVG dimensions...
@@ -50,11 +51,11 @@ svg {
     <div id="temperature_line_chart">
       <svg style="height: 500px;"></svg>
     </div>
-
+<!--
     <div id="on_off_status_bar_chart">
       <svg></svg>
     </div>
-
+-->
   </div>
 
 <script src="/static/d3js/novus-nvd3-81bccd2/lib/d3.v2.js"></script>
@@ -70,9 +71,6 @@ svg {
 <script src="/static/d3js/novus-nvd3-81bccd2/src/models/multiBarChart.js"></script>
 <script>
 
-
-
-
 // Wrapping in nv.addGraph allows for '0 timeout render', stores rendered charts in nv.graphs, and may do more in the future... it's NOT required
 
 var x_scale = d3.scale.linear()
@@ -80,12 +78,14 @@ var x_scale = d3.scale.linear()
                     .range([0, 500]);
 
 var chart;
-
+ var linegraph;
 nv.addGraph(function() {
   chart = nv.models.lineChart();
 
   chart
-      .x(function(d,i) { return i })
+      .x(function(d,i) { 
+        console.log(d);
+        return d.x; })
 
 
   chart.xAxis // chart sub-models (ie. xAxis, yAxis, etc) when accessed directly, return themselves, not the parent chart, so need to chain separately
@@ -97,9 +97,9 @@ nv.addGraph(function() {
   chart.yAxis
       .axisLabel('Temperature')
       .tickFormat(d3.format(',.1f'));
-
+  linegraph = line_graph();
   d3.select('#temperature_line_chart svg')
-      .datum(line_graph())
+      .datum(linegraph)
     .transition().duration(500)
       .call(chart);
 
@@ -111,6 +111,7 @@ nv.addGraph(function() {
   return chart;
 });
 
+/*
 nv.addGraph(function() {
     chart = nv.models.multiBarChart()
 //      .barColor(d3.scale.category20().range());
@@ -135,47 +136,62 @@ nv.addGraph(function() {
 
     return chart;
 });
+*/
 
-function generate_temperature_array(data_array) {
+function generate_temperature_array(temperature_data_array, timestamp_data_array) {
 
   var temperature_formatted_array = [];
-  var temperature_array = data_array;
-  console.log(temperature_array)
+  var temperature_array = temperature_data_array;
+  var timestamp_array = timestamp_data_array;
   for (var i = 0; i < temperature_array.length; i++){
-    temperature_formatted_array.push({x: i, y: temperature_array[i]});
+    temperature_formatted_array.push({x: timestamp_array[i], y: temperature_array[i]});
   }
+  console.log(temperature_formatted_array);
 
   return temperature_formatted_array;
 
 }
 
+function generate_status_array(data_array, status_id, lane_id) {
 
+  var status_formatted_array = [];
+  var status_array = data_array;
+  status_formatted_array.push({"lane": lane_id, "id": status_id, "start": status_array[0], "end": status_array[1]});
+  console.log(status_formatted_array);
+  return status_formatted_array
+}
 
+          //{"lane": 2, "id": "Three Kingdoms", "start": 10, "end": 670},
 
 function line_graph() {
 
   var main_boiler_1_temperature = {{ main_boiler_1_temperature }}
   var main_boiler_2_temperature = {{ main_boiler_2_temperature }}
-  console.log(main_boiler_2_temperature);
+  var main_boiler_1_timestamp = {{ main_boiler_1_timestamp }}
+  var main_boiler_2_timestamp = {{ main_boiler_2_timestamp }}
   return [
     {
       area: false,
-      values: generate_temperature_array(main_boiler_1_temperature),
+      values: generate_temperature_array(main_boiler_1_temperature, main_boiler_1_timestamp),
       key: "Main Boiler 1",
       color: "#ff7f0e",
     },
     {
       area: false,
-      values: generate_temperature_array(main_boiler_2_temperature),
+      values: generate_temperature_array(main_boiler_2_temperature, main_boiler_2_timestamp),
       key: "Main Boiler 2",
       color: "#ff7f0e",
     },
     {
       area: false,
-      values: [{x:0, y:212}, {x:0, y:180},],
+      values: [{x:0, y:212}, {x:1, y:180},],
 //      key: "Border",
-      color: "FFFFFFF",
+      color: "FFF",
     }
+
+  ];
+}
+
 /*    {
       area: true,
       values: [{x:1, y:205.5}, {x:2, y:205.2}, {x:3, y:205.2}, {x:4, y:205.5}, {x:5, y:205.6}, {x:6, y:205.4}, {x:7, y:205.5}, {x:8, y:205.8}, {x:9, y:205.2}, {x:10, y:205.5}, {x:11, y:205.1}, {x:12, y:205.2}, {x:13, y:205.5}, {x:14, y:205.5}, {x:15, y:205.2}, {x:16, y:205.5}, {x:17, y:205.6}, {x:18, y:204.2}, ],
@@ -195,9 +211,9 @@ function line_graph() {
       color: "#2ca02c"
     }
 */
-  ];
-}
 
+
+/*
 function bar_graph() {
 
   return [
@@ -227,7 +243,189 @@ function bar_graph() {
     }
   ];
 }
+*/
+    //data
+  function histogram(){
 
+    var array_length = {{ main_boiler_1_temperature }}.length
+    var lanes = ["", "", "", "", "", "", "",],
+      laneLength = lanes.length,
+      items = [
+              {"lane": 0, "id": "Group 1 On", "start": 0, "end": 27},
+              generate_status_array([0, 30], "Pump", 4),
+              {"lane": 2, "id": "Group 3 On", "start": 3, "end": 30},
+              {"lane": 1, "id": "Pump", "start": 0, "end": 5},
+              ]
+      timeBegin = 0,
+      timeEnd = array_length;
+
+    var m = [0, 30, 15, 80], //top right bottom left
+      w = 960 - m[1] - m[3],
+      h = 500 - m[0] - m[2],
+      miniHeight = laneLength * 12 + 55,
+      mainHeight = 0
+      //h - miniHeight - 50;
+ 
+    //scales
+    var x = d3.scale.linear()
+        .domain([timeBegin, timeEnd])
+        .range([0, w]);
+    var x1 = d3.scale.linear()
+        .range([0, w]);
+    var y1 = d3.scale.linear()
+        .domain([0, laneLength])
+        .range([0, mainHeight]);
+    var y2 = d3.scale.linear()
+        .domain([0, laneLength])
+        .range([0, miniHeight]);
+ 
+    var chart = d3.select("body")
+          .append("svg")
+          .attr("width", w + m[1] + m[3])
+          .attr("height", h + m[0] + m[2])
+          .attr("class", "chart");
+    
+    chart.append("defs").append("clipPath")
+      .attr("id", "clip")
+      .append("rect")
+      .attr("width", w)
+      .attr("height", mainHeight);
+ 
+    var main = chart.append("g")
+          .attr("transform", "translate(" + m[3] + "," + m[0] + ")")
+          .attr("width", w)
+          .attr("height", mainHeight)
+          .attr("class", "main");
+    
+    var mini = chart.append("g")
+          .attr("transform", "translate(" + m[3] + "," + (mainHeight + m[0]) + ")")
+          .attr("width", w)
+          .attr("height", miniHeight)
+          .attr("class", "mini");
+    
+    //main lanes and texts
+    /*main.append("g").selectAll(".laneLines")
+      .data(items)
+      .enter().append("line")
+      .attr("x1", m[1])
+      .attr("y1", function(d) {return y1(d.lane);})
+      .attr("x2", w)
+      .attr("y2", function(d) {return y1(d.lane);})
+      .attr("stroke", "lightgray")
+ 
+    main.append("g").selectAll(".laneText")
+      .data(lanes)
+      .enter().append("text")
+      .text(function(d) {return d;})
+      .attr("x", -m[1])
+      .attr("y", function(d, i) {return y1(i + .5);})
+      .attr("dy", ".5ex")
+      .attr("text-anchor", "end")
+      .attr("class", "laneText");
+    */
+    //mini lanes and texts
+    mini.append("g").selectAll(".laneLines")
+      .data(items)
+      .enter().append("line")
+      .attr("x1", m[1])
+      .attr("y1", function(d) {return y2(d.lane);})
+      .attr("x2", w)
+      .attr("y2", function(d) {return y2(d.lane);})
+      .attr("stroke", "lightgray");
+ 
+    mini.append("g").selectAll(".laneText")
+      .data(lanes)
+      .enter().append("text")
+      .text(function(d) {return d;})
+      .attr("x", -m[1])
+      .attr("y", function(d, i) {return y2(i + .5);})
+      .attr("dy", ".5ex")
+      .attr("text-anchor", "end")
+      .attr("class", "laneText");
+ 
+    var itemRects = main.append("g")
+              .attr("clip-path", "url(#clip)");
+    
+    //mini item rects
+    mini.append("g").selectAll("miniItems")
+      .data(items)
+      .enter().append("rect")
+      .attr("class", function(d) {return "miniItem" + d.lane;})
+      .attr("x", function(d) {return x(d.start);})
+      .attr("y", function(d) {return y2(d.lane + .5) - 5;})
+      .attr("width", function(d) {return x(d.end - d.start);})
+      .attr("height", 10);
+ 
+    //mini labels
+    mini.append("g").selectAll(".miniLabels")
+      .data(items)
+      .enter().append("text")
+      .text(function(d) {return d.id;})
+      .attr("x", function(d) {return x(d.start);})
+      .attr("y", function(d) {return y2(d.lane + .5);})
+      .attr("dy", ".5ex");
+ 
+    //brush
+    /*
+    var brush = d3.svg.brush()
+              .x(x)
+              .on("brush", display);
+ 
+    mini.append("g")
+      .attr("class", "x brush")
+      .call(brush)
+      .selectAll("rect")
+      .attr("y", 1)
+      .attr("height", miniHeight - 1);
+    
+    display();
+  }
+    
+    function display() {
+
+      var rects, labels,
+        minExtent = brush.extent()[0],
+        maxExtent = brush.extent()[1],
+        visItems = items.filter(function(d) {return d.start < maxExtent && d.end > minExtent;});
+ 
+      mini.select(".brush")
+        .call(brush.extent([minExtent, maxExtent]));
+ 
+      x1.domain([minExtent, maxExtent]);
+ 
+      //update main item rects
+      rects = itemRects.selectAll("rect")
+              .data(visItems, function(d) { return d.id; })
+        .attr("x", function(d) {return x1(d.start);})
+        .attr("width", function(d) {return x1(d.end) - x1(d.start);});
+      
+      rects.enter().append("rect")
+        .attr("class", function(d) {return "miniItem" + d.lane;})
+        .attr("x", function(d) {return x1(d.start);})
+        .attr("y", function(d) {return y1(d.lane) + 10;})
+        .attr("width", function(d) {return x1(d.end) - x1(d.start);})
+        .attr("height", function(d) {return .8 * y1(1);});
+ 
+      rects.exit().remove();
+ 
+      //update the item labels
+      labels = itemRects.selectAll("text")
+        .data(visItems, function (d) { return d.id; })
+        .attr("x", function(d) {return x1(Math.max(d.start, minExtent) + 2);});
+ 
+      labels.enter().append("text")
+        .text(function(d) {return d.id;})
+        .attr("x", function(d) {return x1(Math.max(d.start, minExtent));})
+        .attr("y", function(d) {return y1(d.lane + .5);})
+        .attr("text-anchor", "start");
+ 
+      labels.exit().remove();
+ 
+    }
+    */
+  }
+
+  histogram();
 
 </script>
 
